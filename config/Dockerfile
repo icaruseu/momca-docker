@@ -1,0 +1,81 @@
+ARG BASE_CONTAINER=adoptopenjdk/openjdk11:latest
+FROM $BASE_CONTAINER
+
+LABEL maintainer="Daniel Jeller <djeller@nettek.at>"
+
+ENV JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+
+ARG BRANCH=master
+ARG REPOSITORY="https://github.com/icaruseu/mom-ca.git"
+ARG PASSWORD
+ARG INIT_MEMORY=256
+ARG MAX_MEMORY=2048
+ARG CACHE_SIZE=256
+ARG COLLECTION_CACHE=256
+ARG LUCENE_BUFFER=256
+ARG BACKUP_TRIGGER='0 0 4 * * ?'
+ARG REVISION=''
+ARG HTTP_PORT=8080
+ARG HTTPS_PORT=8443
+ARG SERVER_NAME='localhost'
+
+RUN apt-get update && apt-get -yq dist-upgrade &&\
+    apt-get install -yq --no-install-recommends \
+    ant \
+    git \
+    sudo \
+    unzip \
+    wget &&\
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/mom.XRX
+
+VOLUME /opt/mom.XRX-data
+
+RUN git clone --single-branch --branch ${BRANCH} ${REPOSITORY} .
+
+RUN rm build.properties.xml &&\
+    echo '<?xml version="1.0" encoding="UTF-8"?>' >> build.properties.xml &&\
+    echo '<!-- @author: Jochen Graf -->' >> build.properties.xml &&\
+    echo '<XRX>' >> build.properties.xml &&\
+    echo '<!-- ################################ XRX Project Settings ################################ -->' >> build.properties.xml &&\
+    echo '<project-name>mom</project-name>' >> build.properties.xml &&\
+    echo '<deploy>core/**,mom/**</deploy>' >> build.properties.xml &&\
+    echo '<password>'"${PASSWORD}"'</password>' >> build.properties.xml &&\
+    echo '<!-- ################################ Java Settings ################################ -->' >> build.properties.xml &&\
+    echo '<java>' >> build.properties.xml &&\
+    echo '<initmemory>'"${INIT_MEMORY}"'</initmemory>' >> build.properties.xml &&\
+    echo '<maxmemory>'"${MAX_MEMORY}"'</maxmemory>' >> build.properties.xml &&\
+    echo '</java>' >> build.properties.xml &&\
+    echo '<!-- ################################ eXist Settings ################################ -->' >> build.properties.xml &&\
+    echo '<exist>' >> build.properties.xml &&\
+    echo '<cache-size>'"${CACHE_SIZE}"'</cache-size>' >> build.properties.xml &&\
+    echo '<collection-cache>'"${COLLECTION_CACHE}"'</collection-cache>' >> build.properties.xml &&\
+    echo '<lucene-buffer>'"${LUCENE_BUFFER}"'</lucene-buffer>' >> build.properties.xml &&\
+    echo '<backup-cron-trigger>'"${BACKUP_TRIGGER}"'</backup-cron-trigger>' >> build.properties.xml &&\
+    echo '<revision>'"${REVISION}"'</revision>' >> build.properties.xml &&\
+    echo '</exist>' >> build.properties.xml &&\
+    echo '<!-- ################################ Jetty Settings ################################ -->' >> build.properties.xml &&\
+    echo '<jetty>' >> build.properties.xml &&\
+    echo '<port>'"${HTTP_PORT}"'</port>' >> build.properties.xml &&\
+    echo '<port-ssl>'"${HTTPS_PORT}"'</port-ssl>' >> build.properties.xml &&\
+    echo '<servername>'"${SERVER_NAME}"'</servername>' >> build.properties.xml &&\
+    echo '</jetty>' >> build.properties.xml &&\
+    echo '</XRX>' >> build.properties.xml
+
+RUN ant install &&\
+    ant stop
+
+RUN echo '#!/bin/bash' >> /usr/local/bin/docker-entrypoint.sh &&\
+    echo 'set -e' >> /usr/local/bin/docker-entrypoint.sh &&\
+    echo 'ant start' >> /usr/local/bin/docker-entrypoint.sh &&\
+    echo 'tail -f /dev/null' >> /usr/local/bin/docker-entrypoint.sh &&\
+    chmod +x /usr/local/bin/docker-entrypoint.sh
+
+EXPOSE ${HTTP_PORT} ${HTTPS_PORT}
+
+RUN export EXIST_HOME=/opt/mom.XRX/localhost
+
+HEALTHCHECK CMD [ "java", "-jar","-Dexist.home=/opt/mom.XRX/localhost",  "localhost/start.jar", "client", "--no-gui",  "--xpath", "system:get-version()" ]
+
+ENTRYPOINT ["docker-entrypoint.sh"]

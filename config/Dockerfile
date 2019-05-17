@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=adoptopenjdk/openjdk11:latest
+ARG BASE_CONTAINER=adoptopenjdk/openjdk8:latest
 FROM $BASE_CONTAINER
 
 LABEL maintainer="Daniel Jeller <djeller@nettek.at>"
@@ -28,11 +28,11 @@ RUN apt-get update && apt-get -yq dist-upgrade &&\
     wget &&\
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /opt/mom.XRX
+WORKDIR /momca
 
-VOLUME /opt/mom.XRX-data
+RUN git clone --single-branch --branch ${BRANCH} ${REPOSITORY} mom.XRX
 
-RUN git clone --single-branch --branch ${BRANCH} ${REPOSITORY} .
+WORKDIR /momca/mom.XRX
 
 RUN rm build.properties.xml &&\
     echo '<?xml version="1.0" encoding="UTF-8"?>' >> build.properties.xml &&\
@@ -66,16 +66,23 @@ RUN rm build.properties.xml &&\
 RUN ant install &&\
     ant stop
 
+WORKDIR /opt/momca
+
+RUN mv /momca/* .
+
+VOLUME /opt/momca/mom.XRX-data
+
+RUN export EXIST_HOME=/opt/momca/mom.XRX/localhost
+
 RUN echo '#!/bin/bash' >> /usr/local/bin/docker-entrypoint.sh &&\
     echo 'set -e' >> /usr/local/bin/docker-entrypoint.sh &&\
+    echo 'cd /opt/momca/mom.XRX' >> /usr/local/bin/docker-entrypoint.sh &&\
     echo 'ant start' >> /usr/local/bin/docker-entrypoint.sh &&\
     echo 'tail -f /dev/null' >> /usr/local/bin/docker-entrypoint.sh &&\
     chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE ${HTTP_PORT} ${HTTPS_PORT}
 
-RUN export EXIST_HOME=/opt/mom.XRX/localhost
-
-HEALTHCHECK CMD [ "java", "-jar","-Dexist.home=/opt/mom.XRX/localhost",  "localhost/start.jar", "client", "--no-gui",  "--xpath", "system:get-version()" ]
+HEALTHCHECK CMD [ "java", "-jar","-Dexist.home=/opt/momca/mom.XRX/localhost",  "/opt/momca/mom.XRX/localhost/start.jar", "client", "--no-gui",  "--xpath", "system:get-version()" ]
 
 ENTRYPOINT ["docker-entrypoint.sh"]

@@ -21,7 +21,7 @@ services:
         HTTPS_PORT: ${HTTPS_PORT:-8443}
         SERVER_NAME: ${SERVER_NAME:-localhost}
     volumes:
-      - data:/opt/mom.XRX-data
+      - data:/opt/momca/mom.XRX-data
     container_name: momca
     restart: always
     networks:

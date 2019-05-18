@@ -77,12 +77,13 @@ RUN export EXIST_HOME=/opt/momca/mom.XRX/localhost
 RUN echo '#!/bin/bash' >> /usr/local/bin/docker-entrypoint.sh &&\
     echo 'set -e' >> /usr/local/bin/docker-entrypoint.sh &&\
     echo 'cd /opt/momca/mom.XRX' >> /usr/local/bin/docker-entrypoint.sh &&\
-    echo 'ant start' >> /usr/local/bin/docker-entrypoint.sh &&\
+    echo 'sudo localhost/bin/startup.sh' >> /usr/local/bin/docker-entrypoint.sh &&\
     echo 'tail -f /dev/null' >> /usr/local/bin/docker-entrypoint.sh &&\
     chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE ${HTTP_PORT} ${HTTPS_PORT}
 
-HEALTHCHECK CMD [ "java", "-jar","-Dexist.home=/opt/momca/mom.XRX/localhost",  "/opt/momca/mom.XRX/localhost/start.jar", "client", "--no-gui",  "--xpath", "system:get-version()" ]
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:8080/ || exit 1
 
 ENTRYPOINT ["docker-entrypoint.sh"]

@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=adoptopenjdk/openjdk8:latest
+ARG BASE_CONTAINER=adoptopenjdk/openjdk12:latest
 FROM $BASE_CONTAINER
 
 LABEL maintainer="Daniel Jeller <djeller@nettek.at>"
@@ -78,7 +78,6 @@ RUN echo '#!/bin/bash' >> /usr/local/bin/docker-entrypoint.sh &&\
   echo 'set -e' >> /usr/local/bin/docker-entrypoint.sh &&\
   echo 'cd /opt/momca/mom.XRX' >> /usr/local/bin/docker-entrypoint.sh &&\
   echo 'sudo localhost/bin/startup.sh' >> /usr/local/bin/docker-entrypoint.sh &&\
-  echo 'tail -f /dev/null' >> /usr/local/bin/docker-entrypoint.sh &&\
   chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE ${HTTP_PORT} ${HTTPS_PORT}

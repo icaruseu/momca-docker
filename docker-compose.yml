@@ -1,7 +1,6 @@
-version: '3'
+version: "3"
 
 services:
-
   momca:
     image: momca
     build:
@@ -25,17 +24,18 @@ services:
     container_name: momca
     restart: always
     networks:
-      - traefik
+      - default
     labels:
       - traefik.backend=momca-backend
       - traefik.docker.network=traefik
       - traefik.frontend.rule=Host:${HOST}
       - traefik.enable=true
-      - traefik.port=80
+      - traefik.port=${HTTP_PORT:-8080}
 
 volumes:
   data: {}
 
 networks:
-  traefik:
-    external: true
+  default:
+    external:
+      name: ${TRAEFIK_NETWORK:-traefik}

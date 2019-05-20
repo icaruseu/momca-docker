@@ -72,6 +72,9 @@ RUN mv /momca/* .
 
 VOLUME /opt/momca/mom.XRX-data
 
+RUN mkdir -p /tmp/restore &&\
+  mkdir -p /opt/momca/mom.XRX-data/export
+
 RUN export EXIST_HOME=/opt/momca/mom.XRX/localhost
 
 RUN echo '#!/bin/bash' >> /usr/local/bin/docker-entrypoint.sh &&\

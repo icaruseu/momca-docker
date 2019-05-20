@@ -21,6 +21,8 @@ services:
         SERVER_NAME: ${SERVER_NAME:-localhost}
     volumes:
       - data:/opt/momca/mom.XRX-data
+      - ./restore:/tmp/restore
+      - ./backup:/opt/momca/mom.XRX-data/export
     container_name: momca
     restart: always
     networks:

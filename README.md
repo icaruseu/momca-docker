@@ -106,7 +106,7 @@ sudo docker-compose -f docker-compose.dev.yml up -d
 
 After the modification of the source files and building the code with `ant install` (see below) or similar, the data can be accessed directly in _./dev/mom.XRX-data_.
 
-MOM-CA will be available at the following url: _localhost:8080/mom/home_
+MOM-CA will be available at the following url: _localhost:[HTTP_PORT]/mom/home_
 
 To call an ant target inside the dev container use the following command:
 

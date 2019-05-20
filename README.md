@@ -107,3 +107,11 @@ To call an ant target inside the dev container use the following command:
 ```shell
 sudo docker exec -it -w /opt/momca/mom.XRX momca-dev ant [target]
 ```
+
+Stop the development server with the following command:
+
+```shell
+sudo docker-compose -f docker-compose.dev.yml down
+```
+
+_The data on the local file system will not be removed even if called with `down -v`._

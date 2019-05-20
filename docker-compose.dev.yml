@@ -10,6 +10,8 @@ services:
       - ./restore:/tmp/restore
     container_name: momca-dev
     restart: always
+    healthcheck:
+      disable: true
     ports:
       - ${HTTP_PORT:-8080}
       - ${HTTPS_PORT:-8443}

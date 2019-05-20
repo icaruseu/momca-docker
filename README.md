@@ -84,13 +84,13 @@ sudo docker-compose down
 
 ## Development with Docker
 
-This repository includes a docker-compose file suited for development. It can be run with the following command:
+This repository includes a docker-compose file suited for development. The source code to be used in the container has to be added next to the compose file into _./dev/mom.XRX_, possibly by cloning the desired git repository. It can be directly modified in place and will be immediately visible inside the container. After the source code is present it can be run with the following command:
 
 ```shell
 sudo docker-compose -f docker-compose.dev.yml up -d
 ```
 
-The source code and data will be accessible on the host system in the _dev_ fonder next to the compose file.
+ After the modification of the source files and building the code with `ant install` (see below) or similar, the data can be accessed directly in _./dev/mom.XRX-data_.
 
 MOM-CA will be available at the following url: _localhost:8080/mom/home_
 

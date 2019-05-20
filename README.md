@@ -4,8 +4,8 @@ This is a Dockerfile with accompanying docker-compose.yml that enables the build
 
 ## Install Docker and docker-compose
 
-[Docker](https://docs.docker.com/install/)
-[docker-compose](https://docs.docker.com/compose/install)
+* [Docker](https://docs.docker.com/install/)
+* [docker-compose](https://docs.docker.com/compose/install)
 
 
 

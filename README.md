@@ -4,7 +4,7 @@ This is a Dockerfile with accompanying docker-compose.yml that enables the build
 
 ## Environment parameters
 
-The following environment parameters can be seit either when building the Docker image as command line parameters or in a `.env` file used by docker-compose.
+The following environment parameters can be seit either when building the Docker image as command line parameters or in a `.env` file used by docker-compose. There should be two folders parallel to the docker-compose file: `backup` and `restore`. These are mounted into the container and contain the backups MOM-CA makes as well as enables to provide backups for restoration purposes to the container.
 
 ### Build time
 

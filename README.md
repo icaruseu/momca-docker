@@ -6,7 +6,7 @@ This is a Dockerfile with accompanying docker-compose.yml that enables the build
 
 * [Docker](https://docs.docker.com/install/)
 * [docker-compose](https://docs.docker.com/compose/install)
-* [traefik](https://docs.traefik.io/user-guide/docker-and-lets-encrypt/)
+* [traefik](https://docs.traefik.io/user-guide/docker-and-lets-encrypt/) (for production)
 
 ## Environment parameters
 

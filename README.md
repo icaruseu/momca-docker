@@ -2,7 +2,7 @@
 
 This is a Dockerfile with accompanying docker-compose.yml that enables the building of a Docker image for [MOM-CA](https://github.com/icaruseu/mom-ca). It is set up to use an existing [traefik](https://traefik.io/) container as reverse proxy. If started with docker-compose file, the data is persisted in a named volume called _data_.
 
-## Install Docker, docker-compose ant traefik
+## Install Docker, docker-compose and traefik
 
 * [Docker](https://docs.docker.com/install/)
 * [docker-compose](https://docs.docker.com/compose/install)

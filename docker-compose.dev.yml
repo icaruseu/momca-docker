@@ -5,9 +5,9 @@ services:
     image: momca:latest
     volumes:
       - ./backup:/opt/momca/mom.XRX-data/export
-      - ./data:/opt/momca/mom.XRX-data
+      - ./dev/data:/opt/momca/mom.XRX-data
+      - ./dev/src:/opt/momca/mom.XRX
       - ./restore:/tmp/restore
-      - ./src:/opt/momca/mom.XRX
     container_name: momca-dev
     restart: always
     ports:

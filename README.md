@@ -92,8 +92,8 @@ sudo docker-compose up -d -f docker-compose.dev.yml
 
 The source code and data will be accessible on the host system if the following folders are manually created next to the docker-compose file.
 
-- data
-- src
+- dev/data
+- dev/src
 
 MOM-CA will be available at the following url: _localhost:8080/mom/home_
 

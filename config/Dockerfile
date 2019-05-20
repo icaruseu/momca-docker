@@ -3,6 +3,8 @@ FROM $BASE_CONTAINER
 
 LABEL maintainer="Daniel Jeller <djeller@nettek.at>"
 
+USER root
+
 ENV JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 
 ARG BRANCH=master

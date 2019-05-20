@@ -39,3 +39,11 @@ MAX_MEMORY=4096
 HOST=monasterium.net
 TRAEFIK_NETWORK=traefik
 ```
+
+### Restoring a backup
+
+A backup can be restored by copying the file to the "resore" folder next to the docker-compose.yml file and running the following query in eXide:
+
+```
+system:restore("/tmp/restore/[backup_name]", "[admin_password]", "admin_password")
+```

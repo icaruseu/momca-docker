@@ -1,24 +1,8 @@
 version: "3"
 
 services:
-  momca:
-    image: momca
-    build:
-      context: ./config
-      dockerfile: ./Dockerfile
-      args:
-        BRANCH: ${BRANCH:-master}
-        REPOSITORY: ${REPOSITORY:-https://github.com/icaruseu/mom-ca.git}
-        PASSWORD: ${PASSWORD}
-        INIT_MEMORY: ${INIT_MEMORY:-256}
-        MAX_MEMORY: ${MAX_MEMORY:-2048}
-        CACHE_SIZE: ${CACHE_SIZE:-256}
-        COLLECTION_CACHE: ${COLLECTION_CACHE:-256}
-        LUCENE_BUFFER: ${LUCENE_BUFFER:-256}
-        BACKUP_TRIGGER: ${BACKUP_TRIGGER:-0 0 4 * * ?}
-        HTTP_PORT: ${HTTP_PORT:-8080}
-        HTTPS_PORT: ${HTTPS_PORT:-8443}
-        SERVER_NAME: ${SERVER_NAME:-localhost}
+  momca-dev:
+    image: momca:latest
     volumes:
       - ./backup:/opt/momca/mom.XRX-data/export
       - ./data:/opt/momca/mom.XRX-data
@@ -27,8 +11,5 @@ services:
     container_name: momca-dev
     restart: always
     ports:
-      - 8080:8080
-      - 8443:8443
-
-volumes:
-  data: {}
+      - ${HTTP_PORT:-8080}
+      - ${HTTPS_PORT:-8443}

@@ -90,10 +90,7 @@ This repository includes a docker-compose file suited for development. It can be
 sudo docker-compose -f docker-compose.dev.yml up -d
 ```
 
-The source code and data will be accessible on the host system if the following folders are manually created next to the docker-compose file.
-
-- dev/data
-- dev/src
+The source code and data will be accessible on the host system in the _dev_ fonder next to the compose file.
 
 MOM-CA will be available at the following url: _localhost:8080/mom/home_
 

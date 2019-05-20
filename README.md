@@ -2,6 +2,13 @@
 
 This is a Dockerfile with accompanying docker-compose.yml that enables the building of a Docker image for [MOM-CA](https://github.com/icaruseu/mom-ca). It is set up to use an existing [traefik](https://traefik.io/) container as reverse proxy. If started with docker-compose file, the data is persisted in a named volume called _data_.
 
+## Install Docker and docker-compose
+
+[Docker](https://docs.docker.com/install/)
+[docker-compose](https://docs.docker.com/compose/install)
+
+
+
 ## Environment parameters
 
 The following environment parameters can be seit either when building the Docker image as command line parameters or in a `.env` file used by docker-compose. There should be two folders parallel to the docker-compose file: `backup` and `restore`. These are mounted into the container and contain the backups MOM-CA makes as well as enables to provide backups for restoration purposes to the container.

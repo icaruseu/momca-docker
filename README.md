@@ -26,10 +26,12 @@ The following environment parameters can be seit either when building the Docker
 
 ### Run time
 
-| Name            | Default | Mandatory | Description                                                                   |
-| --------------- | ------- | --------- | ----------------------------------------------------------------------------- |
-| HOST            |         | yes       | The host name the reverse proxy listens to for connections to this container. |
-| TRAEFIK_NETWORK | traefik | no        | The name of the external network used by traefik.                             |
+| Name            | Default | Mandatory           | Description                                                                   |
+| --------------- | ------- | ------------------- | ----------------------------------------------------------------------------- |
+| HOST            |         | yes for production  | The host name the reverse proxy listens to for connections to this container. |
+| TRAEFIK_NETWORK | traefik | no                  | The name of the external network used by traefik.                             |
+| DEV_DATA_PATH   |         | yes for development | The host path for the development data volume.                                |
+| DEV_SRC_PATH    |         | yes for development | The host path for the development source volume.                              |
 
 ## Example basic .env file
 
@@ -84,13 +86,19 @@ sudo docker-compose down
 
 ## Development with Docker
 
-This repository includes a docker-compose file suited for development. The source code to be used in the container has to be added next to the compose file into _./dev/mom.XRX_, possibly by cloning the desired git repository. It can be directly modified in place and will be immediately visible inside the container. After the source code is present it can be run with the following command:
+**Note: The development environment has to be cloned into and started from a different folder than a live environment on the same machine to avoid conflicts.**
+
+This repository includes a docker-compose file suited for development. If started using the `docker-compose.dev.yml`, both the source and data directories of MOM-CA will be made available at a location configurable by environment variables (see above). The source code can then be directly modified in place and will be immediately visible inside the container. The code will be based on the git repository set in the environment variable used to build the image, so changes can be directly committed to the repository if so desired.
+
+__Please note that the folders set in the environment variables need to be already existing before starting the container.__
+
+Start the development container using the following command:
 
 ```shell
 sudo docker-compose -f docker-compose.dev.yml up -d
 ```
 
- After the modification of the source files and building the code with `ant install` (see below) or similar, the data can be accessed directly in _./dev/mom.XRX-data_.
+After the modification of the source files and building the code with `ant install` (see below) or similar, the data can be accessed directly in _./dev/mom.XRX-data_.
 
 MOM-CA will be available at the following url: _localhost:8080/mom/home_
 

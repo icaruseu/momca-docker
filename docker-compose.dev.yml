@@ -5,13 +5,25 @@ services:
     image: momca:latest
     volumes:
       - ./backup:/opt/momca/mom.XRX-data/export
-      - ./dev/mom.XRX-data:/opt/momca/mom.XRX-data
-      - ./dev/mom.XRX:/opt/momca/mom.XRX
       - ./restore:/tmp/restore
+      - data:/opt/momca/mom.XRX-data
+      - src:/opt/momca/mom.XRX
     container_name: momca-dev
     restart: always
-    healthcheck:
-      disable: true
     ports:
       - ${HTTP_PORT:-8080}
       - ${HTTPS_PORT:-8443}
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DEV_DATA_PATH}
+      o: bind
+  src:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DEV_SRC_PATH}
+      o: bind

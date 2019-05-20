@@ -2,12 +2,11 @@
 
 This is a Dockerfile with accompanying docker-compose.yml that enables the building of a Docker image for [MOM-CA](https://github.com/icaruseu/mom-ca). It is set up to use an existing [traefik](https://traefik.io/) container as reverse proxy. If started with docker-compose file, the data is persisted in a named volume called _data_.
 
-## Install Docker and docker-compose
+## Install Docker, docker-compose ant traefik
 
 * [Docker](https://docs.docker.com/install/)
 * [docker-compose](https://docs.docker.com/compose/install)
-
-
+* [traefik](https://docs.traefik.io/user-guide/docker-and-lets-encrypt/)
 
 ## Environment parameters
 
@@ -36,7 +35,7 @@ The following environment parameters can be seit either when building the Docker
 | Name            | Default | Mandatory           | Description                                                                   |
 | --------------- | ------- | ------------------- | ----------------------------------------------------------------------------- |
 | HOST            |         | yes for production  | The host name the reverse proxy listens to for connections to this container. |
-| TRAEFIK_NETWORK | traefik | no                  | The name of the external network used by traefik.                             |
+| TRAEFIK_NETWORK | web     | no                  | The name of the external network used by traefik.                             |
 | DEV_DATA_PATH   |         | yes for development | The host path for the development data volume.                                |
 | DEV_SRC_PATH    |         | yes for development | The host path for the development source volume.                              |
 
@@ -46,7 +45,7 @@ The following environment parameters can be seit either when building the Docker
 PASSWORD=my_password
 MAX_MEMORY=4096
 HOST=monasterium.net
-TRAEFIK_NETWORK=traefik
+TRAEFIK_NETWORK=web
 ```
 
 ## Building image

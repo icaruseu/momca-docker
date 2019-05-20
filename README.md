@@ -1,6 +1,6 @@
 # Dockerfile for MOM-CA
 
-This is a Dockerfile with accompanying docker-compose.yml that enables the building of a Docker image for [MOM-CA](https://github.com/icaruseu/mom-ca). It is set up to use an existing [traefik](https://traefik.io/) container as reverse proxy.
+This is a Dockerfile with accompanying docker-compose.yml that enables the building of a Docker image for [MOM-CA](https://github.com/icaruseu/mom-ca). It is set up to use an existing [traefik](https://traefik.io/) container as reverse proxy. If started with docker-compose file, the data is persisted in a named volume called _data_.
 
 ## Environment parameters
 
@@ -40,10 +40,65 @@ HOST=monasterium.net
 TRAEFIK_NETWORK=traefik
 ```
 
+## Building image
+
+Build the image using the following command:
+
+```shell
+sudo docker-compose build
+```
+
+## Starting container
+
+After the image is built, the container can be started with the following command:
+
+```shell
+sudo docker-compose up -d
+```
+
+**Please note that the container will only be available after 5 minutes via the configured host url due to the health check interval.**
+
 ## Restoring a backup
 
-A backup can be restored by copying the file to the "restore" folder next to the docker-compose.yml file and running the following query in eXide:
+A backup can be restored by copying the file(s) to the _restore_ folder next to the docker-compose.yml file and running the following query in eXide:
+
+```xquery
+system:restore("/tmp/restore/[backup_name]", "[admin_password]", "admin_password")
+```
+
+## Running ant targets inside the docker container
+
+Ant tasks defined in the [MOM-CA build.xml](https://github.com/icaruseu/mom-ca/blob/master/build.xml) can be called from outside with the following command.
 
 ```
-system:restore("/tmp/restore/[backup_name]", "[admin_password]", "admin_password")
+sudo docker exec -it -w /opt/momca/mom.XRX momca ant [target]
+```
+
+## Stopping container
+
+The container can be stopped with the following command:
+
+```shell
+sudo docker-compose down
+```
+
+## Development with Docker
+
+This repository includes a docker-compose file suited for development. It can be run with the following command:
+
+```shell
+sudo docker-compose up -d -f docker-compose.dev.yml
+```
+
+The source code and data will be accessible on the host system if the following folders are manually created next to the docker-compose file.
+
+- data
+- src
+
+MOM-CA will be available at the following url: _localhost:8080/mom/home_
+
+To call an ant target inside the dev container use the following command:
+
+```shell
+sudo docker exec -it -w /opt/momca/mom.XRX momca-dev ant [target]
 ```

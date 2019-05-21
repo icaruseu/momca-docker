@@ -2,12 +2,6 @@
 
 This is a Dockerfile with accompanying docker-compose.yml that enables the building of a Docker image for [MOM-CA](https://github.com/icaruseu/mom-ca). It is set up to use an existing [traefik](https://traefik.io/) container as reverse proxy. If started with docker-compose file, the data is persisted in a named volume called _data_.
 
-## Install Docker, docker-compose and traefik
-
-* [Docker](https://docs.docker.com/install/)
-* [docker-compose](https://docs.docker.com/compose/install)
-* [traefik](https://docs.traefik.io/user-guide/docker-and-lets-encrypt/) (for production)
-
 ## Environment parameters
 
 The following environment parameters can be seit either when building the Docker image as command line parameters or in a `.env` file used by docker-compose. There should be two folders parallel to the docker-compose file: `backup` and `restore`. These are mounted into the container and contain the backups MOM-CA makes as well as enables to provide backups for restoration purposes to the container.
@@ -35,17 +29,19 @@ The following environment parameters can be seit either when building the Docker
 | Name            | Default | Mandatory           | Description                                                                   |
 | --------------- | ------- | ------------------- | ----------------------------------------------------------------------------- |
 | HOST            |         | yes for production  | The host name the reverse proxy listens to for connections to this container. |
-| TRAEFIK_NETWORK | web     | no                  | The name of the external network used by traefik.                             |
+| TRAEFIK_NETWORK | traefik | no                  | The name of the external network used by traefik.                             |
 | DEV_DATA_PATH   |         | yes for development | The host path for the development data volume.                                |
 | DEV_SRC_PATH    |         | yes for development | The host path for the development source volume.                              |
 
 ## Example basic .env file
 
+The following has to be placed in a file named _.env_ next to the docker-compose.yml file.
+
 ```
 PASSWORD=my_password
 MAX_MEMORY=4096
 HOST=monasterium.net
-TRAEFIK_NETWORK=web
+TRAEFIK_NETWORK=traefik
 ```
 
 ## Building image
@@ -106,7 +102,7 @@ sudo docker-compose -f docker-compose.dev.yml up -d
 
 After the modification of the source files and building the code with `ant install` (see below) or similar, the data can be accessed directly in _./dev/mom.XRX-data_.
 
-MOM-CA will be available at the following url: _localhost:[HTTP_PORT]/mom/home_
+MOM-CA will be available at the following url: _localhost:8080/mom/home_
 
 To call an ant target inside the dev container use the following command:
 
@@ -121,3 +117,20 @@ sudo docker-compose -f docker-compose.dev.yml down
 ```
 
 _The data on the local file system will not be removed even if called with `down -v`._
+
+### Development with Docker Desktop on Windows
+
+Due to the different ways paths are handled on windows there are some things that need to be taken care for when running Docker with [Docker Desktop](https://docs.docker.com/docker-for-windows/install/), the preferred way to run Docker on Windows (with [hyper-v](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) available):
+
+1) Make sure that the drive(s) to be used in the _docker-compose.dev_ file is enabled in the Docker Desktop [shared drives settings](https://docs.docker.com/docker-for-windows/#shared-drives)
+2) Add the path in the correct notation to the .env file, for instance: _/host_mnt/d/temp/docker-mom.XRX-data_
+
+Example _.env_ file for Docker Desktop on Windows
+```
+BRANCH=dev
+PASSWORD=my-password
+REPOSITORY=https://github.com/[user]/mom-ca.git
+
+DEV_DATA_PATH=/host_mnt/d/temp/docker-mom.XRX-data
+DEV_SRC_PATH=/host_mnt/d/projects/mom-ca
+```

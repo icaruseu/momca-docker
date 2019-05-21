@@ -123,7 +123,7 @@ _The data on the local file system will not be removed even if called with `down
 Due to the different ways paths are handled on windows there are some things that need to be taken care for when running Docker with [Docker Desktop](https://docs.docker.com/docker-for-windows/install/), the preferred way to run Docker on Windows (with [hyper-v](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v) available):
 
 1) Make sure that the drive(s) to be used in the _docker-compose.dev_ file is enabled in the Docker Desktop [shared drives settings](https://docs.docker.com/docker-for-windows/#shared-drives)
-2) Add the path in the correct notation to the .env file, for instance: _/host_mnt/d/temp/docker-mom.XRX-data_
+2) Add the path in the correct notation to the .env file, for instance: _/host_mnt/[drive-letter]/[path]_
 
 Example _.env_ file for Docker Desktop on Windows
 ```

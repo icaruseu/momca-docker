@@ -64,10 +64,10 @@ sudo docker-compose up -d
 
 ## Restoring a backup
 
-A backup can be restored by copying the file(s) to the _restore_ folder next to the docker-compose.yml file and running the following query in eXide:
+A backup can be restored by copying the file(s) to the _restore_ folder next to the docker-compose.yml file and running the following query (see [eXist documentation](https://exist-db.org/exist/apps/fundocs/view.html?uri=http://exist-db.org/xquery/syste)) in eXide:
 
 ```xquery
-system:restore("/tmp/restore/[backup_name]", "[admin_password]", "admin_password")
+system:restore("/tmp/restore/[backup_name]", "[admin_password]", "[admin_password]")
 ```
 
 ## Running ant targets inside the docker container

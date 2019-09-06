@@ -27,6 +27,8 @@ RUN apt-get update && apt-get -yq dist-upgrade &&\
   git \
   sudo \
   unzip \
+  lnav \
+  nano \
   wget &&\
   rm -rf /var/lib/apt/lists/*
 

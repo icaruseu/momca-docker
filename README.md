@@ -86,6 +86,10 @@ The container can be stopped with the following command:
 sudo docker-compose down
 ```
 
+## Log files
+
+The log files will be exposed in the docker-compose repository under the `/logs` folder.
+
 ## Development with Docker
 
 **Note: The development environment has to be cloned into and started from a different folder than a live environment on the same machine to avoid conflicts.**

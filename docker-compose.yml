@@ -23,6 +23,7 @@ services:
       - data:/opt/momca/mom.XRX-data
       - ./restore:/tmp/restore
       - ./backup:/opt/momca/mom.XRX-data/export
+      - ./logs:/opt/momca/mom.XRX/localhost/webapp/WEB-INF/logs  
     container_name: momca
     restart: always
     networks:

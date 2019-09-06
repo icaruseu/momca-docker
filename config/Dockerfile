@@ -77,7 +77,8 @@ RUN mv /momca/* .
 VOLUME /opt/momca/mom.XRX-data
 
 RUN mkdir -p /tmp/restore &&\
-  mkdir -p /opt/momca/mom.XRX-data/export
+  mkdir -p /opt/momca/mom.XRX-data/export &&\
+  mkdir -p /opt/momca/mom.XRX/localhost/webapp/WEB-INF/logs
 
 RUN export EXIST_HOME=/opt/momca/mom.XRX/localhost
 

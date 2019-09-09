@@ -2,3 +2,4 @@ logs
 restore
 backup
 .env
+*.override.yml

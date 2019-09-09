@@ -65,7 +65,7 @@ version: "3"
 services:
   momca:
     volumes:
-      - [Absolute path to public.pem]:/opt/momca/ssl/fullchain.pem:r
+      - [Absolute path to public.pem]:/opt/momca/ssl/fullchain.pem:ro
       - [Absolute path to private.pem]:/opt/momca/ssl/privkey.pem:ro 
 ```
 

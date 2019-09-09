@@ -20,6 +20,7 @@ ARG REVISION=''
 ARG HTTP_PORT=8080
 ARG HTTPS_PORT=8443
 ARG SERVER_NAME='localhost'
+ARG USE_SSL=false
 
 RUN apt-get update && apt-get -yq dist-upgrade &&\
   apt-get install -yq --no-install-recommends \
@@ -29,6 +30,7 @@ RUN apt-get update && apt-get -yq dist-upgrade &&\
   unzip \
   lnav \
   nano \
+  vim \
   wget &&\
   rm -rf /var/lib/apt/lists/*
 
@@ -82,9 +84,27 @@ RUN mkdir -p /tmp/restore &&\
 
 RUN export EXIST_HOME=/opt/momca/mom.XRX/localhost
 
+# Update jetty and betterforms config in case of ssl use
+
+RUN if ${USE_SSL}; then \
+  cd /opt/momca/mom.XRX/localhost/webapp/WEB-INF \
+  ; perl -i -0pe 's#<!--\n\s+(<property name="httpclient.ssl.context" value="de.betterform.connector.http.ssl.KeyStoreSSLContext" description="Full classpath of SSLProtocolSocketFactory which should be used by httpclient."/>)\n-->#$1#g' betterform-config.xml \
+  ; perl -i -0pe 's#<property name="httpclient.ssl.keystore.path" value="PATH-TO-KEYSTORE" description="Location of the keystore to be used by httpclient."/>#<property name="httpclient.ssl.keystore.path" value="/opt/momca/mom.XRX/localhost/tools/jetty/etc/KeyStore.jks" description="Location of the keystore to be used by httpclient."/>#g' betterform-config.xml \
+  ; perl -i -0pe 's#<property name="httpclient.ssl.keystore.passwd" value="KEYSTORE-PASSWD" description="Password to unlock keystore."/>#<property name="httpclient.ssl.keystore.passwd" value="'${PASSWORD}'" description="Password to unlock keystore."/>#g' betterform-config.xml \ 
+  ; fi
+
+# Create entrypoint script
+
 RUN echo '#!/bin/bash' >> /usr/local/bin/docker-entrypoint.sh &&\
   echo 'set -e' >> /usr/local/bin/docker-entrypoint.sh &&\
-  echo 'cd /opt/momca/mom.XRX' >> /usr/local/bin/docker-entrypoint.sh &&\
+  echo 'cd /opt/momca' >> /usr/local/bin/docker-entrypoint.sh
+
+RUN if ${USE_SSL}; then echo 'keytool -genkey -keystore ./mom.XRX/localhost/tools/jetty/etc/KeyStore.jks -keyalg RSA -keysize 2048 -alias app -dname "cn=Unknown, ou=Unknown, o=Unknown, c=Unknown" -storepass '"${PASSWORD}"' -keypass '"${PASSWORD}" >> /usr/local/bin/docker-entrypoint.sh \
+  ; echo 'openssl pkcs12 -export -nodes -out keystore.pkcs12 -in ./ssl/fullchain.pem -inkey ./ssl/privkey.pem -passout pass:'"${PASSWORD}" >> /usr/local/bin/docker-entrypoint.sh \
+  ; echo 'keytool -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -destkeystore ./mom.XRX/localhost/tools/jetty/etc/KeyStore.jks -storepass '"${PASSWORD}"'  -srcstorepass '"${PASSWORD}"' -noprompt' >> /usr/local/bin/docker-entrypoint.sh \
+  ; fi
+
+RUN echo 'cd /opt/momca/mom.XRX' >> /usr/local/bin/docker-entrypoint.sh &&\
   echo 'sudo localhost/bin/startup.sh' >> /usr/local/bin/docker-entrypoint.sh &&\
   chmod +x /usr/local/bin/docker-entrypoint.sh
 

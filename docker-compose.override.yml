@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  momca: 
+    volumes:
+      - /opt/docker/projects/common/traefik/ssl/pem/beta.monasterium.net-public.pem:/opt/momca/ssl/fullchain.pem:ro
+      - /opt/docker/projects/common/traefik/ssl/pem/beta.monasterium.net-private.pem:/opt/momca/ssl/privkey.pem:ro

@@ -8,21 +8,22 @@ The following environment parameters can be seit either when building the Docker
 
 ### Build time
 
-| Name             | Default                                | Mandatory | Description                                                |
-| ---------------- | -------------------------------------- | --------- | ---------------------------------------------------------- |
-| BRANCH           | master                                 | no        | The git branch to use.                                     |
-| REPOSITORY       | https://github.com/icaruseu/mom-ca.git | no        | The Git Repository to base the image on.                   |
-| PASSWORD         |                                        | yes       | The admin password to set during build.                    |
-| INIT_MEMORY      | 256                                    | no        | The initial memory available to the database.              |
-| MAX_MEMORY       | 2048                                   | no        | The maximum memory available to the database.              |
-| CACHE_SIZE       | 256                                    | no        | The eXist cache size.                                      |
-| COLLECTION_CACHE | 256                                    | no        | The eXist collection cache size.                           |
-| LUCENE_BUFFER    | 256                                    | no        | The eXist lucene buffer size.                              |
-| BACKUP_TRIGGER   | 0 0 4 \* \* ?                          | no        | The definition for the backup trigger cronjob.             |
-| REVISION         |                                        | no        | Enable the versioning system. Currently has no effect.     |
-| HTTP_PORT        | 8080                                   | no        | The HTTP port the internal eXist Jetty server listens to.  |
-| HTTPS_PORT       | 8443                                   | no        | The HTTPS port the internal eXist Jetty server listens to. |
-| SERVER_NAME      | localhost                              | no        | The name of the internal server.                           |
+| Name             | Default                                | Mandatory | Description                                                 |
+| ---------------- | -------------------------------------- | --------- | ----------------------------------------------------------- |
+| BRANCH           | master                                 | no        | The git branch to use.                                      |
+| REPOSITORY       | https://github.com/icaruseu/mom-ca.git | no        | The Git Repository to base the image on.                    |
+| PASSWORD         |                                        | yes       | The admin password to set during build.                     |
+| INIT_MEMORY      | 256                                    | no        | The initial memory available to the database.               |
+| MAX_MEMORY       | 2048                                   | no        | The maximum memory available to the database.               |
+| CACHE_SIZE       | 256                                    | no        | The eXist cache size.                                       |
+| COLLECTION_CACHE | 256                                    | no        | The eXist collection cache size.                            |
+| LUCENE_BUFFER    | 256                                    | no        | The eXist lucene buffer size.                               |
+| BACKUP_TRIGGER   | 0 0 4 \* \* ?                          | no        | The definition for the backup trigger cronjob.              |
+| REVISION         |                                        | no        | Enable the versioning system. Currently has no effect.      |
+| HTTP_PORT        | 8080                                   | no        | The HTTP port the internal eXist Jetty server listens to.   |
+| HTTPS_PORT       | 8443                                   | no        | The HTTPS port the internal eXist Jetty server listens to.  |
+| SERVER_NAME      | localhost                              | no        | The name of the internal server.                            |
+| USE_SSL          | false                                  | no        | Whether or not BetterFORM/eXist understands SSL connections |
 
 ### Run time
 
@@ -51,6 +52,25 @@ Build the image using the following command:
 ```shell
 sudo docker-compose build
 ```
+
+### Using SSL
+
+The basic parts of Monasterium are able to work with SSL connections without configuration apart from configuring Traefik in the correct way and setting the correct labels. Unfortunately, for the parts that use BetterFORM (creating new Fonds, importing Charters etc.), more configuration is necessary. The following steps need to be completed:
+
+1) Provide valid SSL keys in a location on the parent file system. For example, this can be done using [traefik-certdumper](https://github.com/SvenDowideit/traefik-certdumper), a Docker container that converts the certificates used by traefik and usually stored in `acme.json` in different external formats. This enables working directly with the Let's Encrypt certificates that Traefik uses.
+2) Mount the SSL keys as volumes. This can be done either by modifying `docker-compose.yml` or (preferably) by creating a `docker-compose.override.yml` that just contains the two additional volumes with an absolute path:
+
+```
+version: "3"
+services:
+  momca:
+    volumes:
+      - [Absolute path to public.pem]:/opt/momca/ssl/fullchain.pem:r
+      - [Absolute path to private.pem]:/opt/momca/ssl/privkey.pem:ro 
+```
+
+3) _Add `USE_SSL=true` in `.env`_
+4) Build container with `sudo docker-compose build`
 
 ## Starting container
 

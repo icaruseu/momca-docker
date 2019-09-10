@@ -20,6 +20,8 @@ services:
         HTTPS_PORT: ${HTTPS_PORT:-8443}
         SERVER_NAME: ${SERVER_NAME:-localhost}
         USE_SSL: ${USE_SSL:-false}
+    environment:
+        HTTP_PORT: ${HTTP_PORT:-8080}
     volumes:
       - data:/opt/momca/mom.XRX-data
       - ./restore:/tmp/restore

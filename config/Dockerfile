@@ -111,6 +111,6 @@ RUN echo 'cd /opt/momca/mom.XRX' >> /usr/local/bin/docker-entrypoint.sh &&\
 EXPOSE ${HTTP_PORT} ${HTTPS_PORT}
 
 HEALTHCHECK --interval=5m --timeout=3s \
-  CMD curl -f http://localhost:8080/ || exit 1
+  CMD curl -f http://localhost:${HTTP_PORT}/ || exit 1
 
 ENTRYPOINT ["docker-entrypoint.sh"]

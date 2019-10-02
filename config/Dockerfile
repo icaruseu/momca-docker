@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=adoptopenjdk/openjdk12:latest
+ARG BASE_CONTAINER=adoptopenjdk/openjdk8:latest
 FROM $BASE_CONTAINER
 
 LABEL maintainer="Daniel Jeller <djeller@nettek.at>"
@@ -7,29 +7,36 @@ USER root
 
 ENV JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 
+ARG BACKUP_TRIGGER='0 0 4 * * ?'
 ARG BRANCH=master
-ARG REPOSITORY="https://github.com/icaruseu/mom-ca.git"
-ARG PASSWORD
-ARG INIT_MEMORY=256
-ARG MAX_MEMORY=2048
 ARG CACHE_SIZE=256
 ARG COLLECTION_CACHE=256
-ARG LUCENE_BUFFER=256
-ARG BACKUP_TRIGGER='0 0 4 * * ?'
-ARG REVISION=''
-ARG HTTP_PORT=8080
 ARG HTTPS_PORT=8443
+ARG HTTP_PORT=8080
+ARG INIT_MEMORY=256
+ARG LUCENE_BUFFER=256
+ARG MAIL_DOMAIN
+ARG MAIL_FROM_ADDRESS
+ARG MAIL_PASSWORD
+ARG MAIL_USER
+ARG MAX_MEMORY=2048
+ARG PASSWORD
+ARG REPOSITORY="https://github.com/icaruseu/mom-ca.git"
+ARG REVISION=''
 ARG SERVER_NAME='localhost'
+ARG SMTP_URL
 ARG USE_SSL=false
 
 RUN apt-get update && apt-get -yq dist-upgrade &&\
   apt-get install -yq --no-install-recommends \
   ant \
+  ca-certificates \
   git \
+  lnav \
+  msmtp \
+  nano \
   sudo \
   unzip \
-  lnav \
-  nano \
   vim \
   wget &&\
   rm -rf /var/lib/apt/lists/*
@@ -83,6 +90,40 @@ RUN mkdir -p /tmp/restore &&\
   mkdir -p /opt/momca/mom.XRX/localhost/webapp/WEB-INF/logs
 
 RUN export EXIST_HOME=/opt/momca/mom.XRX/localhost
+
+# msmtp
+
+RUN touch /etc/msmtprc &&\
+  echo "defaults" >> /etc/msmtprc &&\
+  echo "tls on" >> /etc/msmtprc &&\
+  echo "tls_trust_file /etc/ssl/certs/ca-certificates.crt" >> /etc/msmtprc &&\
+  echo "logfile /var/log/msmtp/msmtp.log" >> /etc/msmtprc &&\
+  echo "account smtp" >> /etc/msmtprc &&\
+  echo "auth on" >> /etc/msmtprc &&\
+  echo "host ${SMTP_URL}" >> /etc/msmtprc &&\
+  echo "port 587" >> /etc/msmtprc &&\
+  echo "domain ${MAIL_DOMAIN}" >> /etc/msmtprc &&\
+  echo "from ${MAIL_FROM_ADDRESS}" >> /etc/msmtprc &&\
+  echo "user ${MAIL_USER}" >> /etc/msmtprc &&\
+  echo "password ${MAIL_PASSWORD}" >> /etc/msmtprc &&\
+  echo "account default : smtp" >> /etc/msmtprc &&\
+  chmod 600 /etc/msmtprc
+
+RUN ln -s /usr/bin/msmtp /usr/sbin/sendmail &&\
+  ln -s /usr/bin/msmtp /usr/bin/sendmail &&\
+  ln -s /usr/bin/msmtp /usr/lib/sendmail
+
+# Logrotate
+
+RUN mkdir /var/log/msmtp &&\
+  touch /etc/logrotate.d/msmtp &&\
+  echo "/var/log/msmtp/*.log {" >> /etc/logrotate.d/msmtp &&\
+  echo "rotate 12" >> /etc/logrotate.d/msmtp &&\
+  echo "monthly" >> /etc/logrotate.d/msmtp &&\
+  echo "compress" >> /etc/logrotate.d/msmtp &&\
+  echo "missingok" >> /etc/logrotate.d/msmtp &&\
+  echo "notifempty" >> /etc/logrotate.d/msmtp &&\
+  echo "}" >> /etc/logrotate.d/msmtp
 
 # Update jetty and betterforms config in case of ssl use
 
